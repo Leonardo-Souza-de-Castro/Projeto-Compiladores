@@ -18,13 +18,21 @@ reserved = {
     "ET":"AND",
     "OU":"OR",
     "NON":"NOT",
+    "FIN":"EOF",
+    "saisir":"INPUT",
+    "afficher":"PRINT",
+    "ouvrir":"OPEN",
+    "fermer":"CLOSE",
 }
-
 # Definição de tokens
 
 tokens = [
     "ID",   # Identificadores
     "NUMBER",  # Números
+    "PLUSPLUS",  # Incremento
+    "MOINSMOINS",  # Decremento
+    "ouvrirPAREN",  # (
+    "fermerPAREN",  # )
     "ADD",    #+
     "SUB",    #-
     "DIV",    #/
@@ -51,6 +59,22 @@ t_MENOR = r'\}'
 t_ignore = ' \t'
 
 # Definição de funções para tokens mais complexos
+
+def t_PLUSPLUS(t):
+    r'PLUSPLUS'
+    return t
+
+def t_ouvrirPAREN(t):
+    r'\('
+    return t
+
+def t_fermerPAREN(t):
+    r'\)'
+    return t
+
+def t_MOINSMOINS(t):
+    r'MOINSMOINS'
+    return t
 
 def t_IGUAL_MAIOR(t):
     r'\{__'
@@ -86,8 +110,10 @@ def t_error(t):
 
 # Exemplo de uso do lexer
 data = """
-entier x = 10 {__ 5
-si x __ 10
+pour(entier i = 0 ET i } 10 ET PLUSPLUS i) ouvrir
+    afficher(i)
+    saisir(i)
+    fermer
 """
 
 lexer = lex.lex()
