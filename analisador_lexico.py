@@ -46,14 +46,24 @@ t_DIV = r'/'
 t_MULT = r'\*'
 t_PCM = r'\%'
 t_IGUAL = r'\='
-t_IGUAL_MAIOR = r'\{__'
-t_IGUAL_MENOR = r'\}__'
 t_MAIOR = r'\{'
 t_MENOR = r'\}'
-t_IGUALDADE = r'\__'
 t_ignore = ' \t'
 
 # Definição de funções para tokens mais complexos
+
+def t_IGUAL_MAIOR(t):
+    r'\{__'
+    return t
+ 
+def t_IGUAL_MENOR(t):
+    r'\}__'
+    return t
+ 
+def t_IGUALDADE(t):
+    r'__'
+    return t
+
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
