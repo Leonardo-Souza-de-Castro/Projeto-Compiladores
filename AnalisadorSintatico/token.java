@@ -1,4 +1,4 @@
-public class Token{
+class Token{
 
 public String lexema;
 public String tipo;

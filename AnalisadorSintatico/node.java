@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node{
+class Node{
 
     String nome;
     List<Node> nodes;
@@ -26,7 +26,7 @@ public class Node{
         return newNode;
      };
 
-     public Node addNode(String enter, String nodeName, string exit){
+     public Node addNode(String enter, String nodeName, String exit){
         Node newNode = new Node(nodeName);
         newNode.enter = enter;
         newNode.exit = exit;
@@ -46,16 +46,16 @@ public class Node{
         return buffer.toString();
     }
 
-    private void print(StringBuilder buffer, String prefix, String childrenPrefix){
+    private void getTreeHelper(StringBuilder buffer, String prefix, String childrenPrefix){
         buffer.append(prefix);
-        buffer.append(this.toString());
+        buffer.append(this.nome);
         buffer.append("\n");
         for (int i = 0; i < nodes.size(); i++){
             Node node = nodes.get(i);
             if (i < nodes.size() - 1){
-                node.print(buffer, childrenPrefix + "├── ", childrenPrefix + "│   ");
+                node.getTreeHelper(buffer, childrenPrefix + "+-- ", childrenPrefix + "|   ");
             } else {
-                node.print(buffer, childrenPrefix + "└── ", childrenPrefix + "    ");
+                node.getTreeHelper(buffer, childrenPrefix + "'-- ", childrenPrefix + "    ");
             }
         }
     }

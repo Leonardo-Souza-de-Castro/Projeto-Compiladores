@@ -1,4 +1,4 @@
-public class Tree {
+class Tree {
     Node root;
 
     public Tree(){
@@ -31,16 +31,20 @@ public class Tree {
 
     public void printCode(Node node){
         System.out.print(node.enter);
-        if (node.nodes.IsEmpty()){
-            System.out.print(node);
+        if (node.nodes.isEmpty()){
+            System.out.print(node.nome);
         }
         for(Node child : node.nodes){
             printCode(child);
-        }        
+        }
         System.out.print(node.exit);
     }
 
     public void printTree(){
+        if (root == null){
+            System.out.println("(arvore vazia)");
+            return;
+        }
         System.out.println(root.getTree());
     }
 
