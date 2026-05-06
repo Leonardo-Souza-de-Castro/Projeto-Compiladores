@@ -1,0 +1,7 @@
+pour(entier i = 0 ET i } 10 ET PLUSPLUS i) ouvrir
+    pour(entier j = 0 ET j } 10 ET PLUSPLUS j) ouvrir
+        afficher(j)
+        fermer
+    afficher(i)
+    saisir(i)
+    fermer

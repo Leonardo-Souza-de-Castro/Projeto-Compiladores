@@ -1,5 +1,6 @@
 import ply.lex as lex
 from ply import yacc
+import subprocess
 
 # Definição de palavras reservadas
 
@@ -108,16 +109,23 @@ def t_error(t):
     print(f"Caractere inválido: {t.value[0]}")
     t.lexer.skip(1)
 
-# Exemplo de uso do lexer
-data = """
-pour(entier i = 0 ET i } 10 ET PLUSPLUS i) ouvrir
-    afficher(i)
-    saisir(i)
-    fermer
-"""
+arquivo_teste = input("Digite o caminho do arquivo de teste: ")
+with open(arquivo_teste, 'r') as file:
+    data = file.read()
 
 lexer = lex.lex()
 lexer.input(data)
 
-for tok in lexer:
-    print(tok)
+arquivo_resultado = "resultado_lexico.txt"
+
+with open(arquivo_resultado, 'w') as file:
+    for tok in lexer:
+        print(f"<{tok.value}, {tok.type}>")
+        file.write(f"<{tok.value}, {tok.type}>" + '\n')
+
+subprocess.run(["javac", "AnalisadorSintatico/*.java"], check=True, shell=True)
+resultado = subprocess.run(['java', '-cp', 'AnalisadorSintatico', 'main'], 
+                               capture_output=True, 
+                               text=True, 
+                               check=True)
+print(resultado.stdout)
