@@ -1,0 +1,5 @@
+pour(entier i = 1 ET i } 20 ET PLUSPLUS i) ouvrir
+    afficher(i)
+    i PLUSPLUS
+fermer
+FIN

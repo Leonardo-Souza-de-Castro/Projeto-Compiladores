@@ -1,3 +1,7 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 class Tree {
     Node root;
 
@@ -46,6 +50,26 @@ class Tree {
             return;
         }
         System.out.println(root.getTree());
+    }
+
+    /**
+     * Exports the AST to a file in the format "depth:nodeName",
+     * one node per line, so the C semantic analyzer can read it.
+     */
+    public void exportToFile(String path) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(path))) {
+            exportNode(root, 0, pw);
+        } catch (IOException e) {
+            System.out.println("Erro ao exportar AST: " + e.getMessage());
+        }
+    }
+
+    private void exportNode(Node node, int depth, PrintWriter pw) {
+        if (node == null) return;
+        pw.println(depth + ":" + node.nome);
+        for (Node child : node.nodes) {
+            exportNode(child, depth + 1, pw);
+        }
     }
 
 }

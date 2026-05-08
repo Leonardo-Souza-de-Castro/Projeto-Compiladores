@@ -49,5 +49,9 @@ public class main {
 
         System.out.println();
         tree.printTree();
+
+        // Export the AST so the C semantic analyzer can consume it
+        tree.exportToFile("resultado_sintatico.txt");
+        System.out.println("AST exportada para 'resultado_sintatico.txt'");
     }
 }

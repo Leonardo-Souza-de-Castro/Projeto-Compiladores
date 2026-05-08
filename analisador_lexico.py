@@ -1,6 +1,5 @@
 import ply.lex as lex
 from ply import yacc
-import subprocess
 
 # Definição de palavras reservadas
 
@@ -123,9 +122,5 @@ with open(arquivo_resultado, 'w') as file:
         print(f"<{tok.value}, {tok.type}>")
         file.write(f"<{tok.value}, {tok.type}>" + '\n')
 
-subprocess.run(["javac", "AnalisadorSintatico/*.java"], check=True, shell=True)
-resultado = subprocess.run(['java', '-cp', 'AnalisadorSintatico', 'main'], 
-                               capture_output=True, 
-                               text=True, 
-                               check=True)
-print(resultado.stdout)
+print("Analise lexica concluida. Resultado salvo em 'resultado_lexico.txt'")
+
