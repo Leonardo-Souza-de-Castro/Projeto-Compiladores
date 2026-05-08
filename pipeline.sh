@@ -138,12 +138,25 @@ if [ $? -ne 0 ]; then
 fi
 echo "      OK → $ARQUIVO_SAIDA"
 
-# ── Resultado final ───────────────────────────────────────────
+# ── Passo 5: Compila e executa o codigo C gerado ─────────────
+EXECUTAVEL="${BASE_NOME}"
+
+echo ""
+echo "[5/5] Compilando o codigo C gerado..."
+gcc "$ARQUIVO_SAIDA" -o "$EXECUTAVEL"
+if [ $? -ne 0 ]; then
+    echo "      ERRO: falha ao compilar $ARQUIVO_SAIDA"
+    exit 1
+fi
+echo "      OK → executavel '$EXECUTAVEL' gerado"
+
 echo ""
 echo "============================================="
 echo " Pipeline concluido com sucesso!"
 echo " Arquivo gerado: $ARQUIVO_SAIDA"
+echo " Executavel:     $EXECUTAVEL"
 echo "============================================="
 echo ""
-echo "Para compilar e executar o codigo gerado:"
-echo "  gcc $ARQUIVO_SAIDA -o programa && ./programa"
+echo "Executando o programa..."
+echo "---------------------------------------------"
+"./$EXECUTAVEL"
