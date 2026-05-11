@@ -108,19 +108,29 @@ def t_error(t):
     print(f"Caractere inválido: {t.value[0]}")
     t.lexer.skip(1)
 
-arquivo_teste = input("Digite o caminho do arquivo de teste: ")
-with open(arquivo_teste, 'r') as file:
-    data = file.read()
+opcao_inicial = input("Qual a opção desejada? (1 - Utilizar o compilador, 2 - Exibir todos os tokens): ")
 
-lexer = lex.lex()
-lexer.input(data)
+if opcao_inicial == '1':
+    arquivo_teste = input("Digite o caminho do arquivo de teste: ")
+    with open(arquivo_teste, 'r') as file:
+        data = file.read()
 
-arquivo_resultado = "resultado_lexico.txt"
+    lexer = lex.lex()
+    lexer.input(data)
 
-with open(arquivo_resultado, 'w') as file:
-    for tok in lexer:
-        print(f"<{tok.value}, {tok.type}>")
-        file.write(f"<{tok.value}, {tok.type}>" + '\n')
+    arquivo_resultado = "resultado_lexico.txt"
 
-print("Analise lexica concluida. Resultado salvo em 'resultado_lexico.txt'")
-
+    with open(arquivo_resultado, 'w') as file:
+        for tok in lexer:
+            print(f"<{tok.value}, {tok.type}>")
+            file.write(f"<{tok.value}, {tok.type}>" + '\n')
+
+    print("Analise lexica concluida. Resultado salvo em 'resultado_lexico.txt'")
+
+elif opcao_inicial == '2':
+    print("Tokens disponíveis:")
+    for token in tokens:
+        print(token)
+
+else:
+    print("Opção inválida. Por favor, escolha 1 ou 2.")
