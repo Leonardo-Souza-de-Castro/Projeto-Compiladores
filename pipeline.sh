@@ -61,12 +61,17 @@ echo " Fonte:  $ARQUIVO_FONTE"
 echo " Saida:  $ARQUIVO_SAIDA"
 echo "============================================="
 
+# ── Prévia opcional: exibir tokens da linguagem ───────────────
+python mostrar_tokens.py
+if [ $? -ne 0 ]; then
+    echo "      ERRO: falha ao executar mostrar_tokens.py."
+    exit 1
+fi
+
 # ── Passo 1: Análise Léxica ───────────────────────────────────
-# O lexer lê o caminho do arquivo via input() (stdin),
-# portanto usamos uma here-string para passá-lo automaticamente.
 echo ""
 echo "[1/4] Executando analise lexica..."
-python analisador_lexico.py <<< "$ARQUIVO_FONTE"
+python analisador_lexico.py "$ARQUIVO_FONTE"
 if [ $? -ne 0 ]; then
     echo "      ERRO: falha na analise lexica."
     exit 1

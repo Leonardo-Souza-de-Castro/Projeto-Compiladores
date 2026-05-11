@@ -1,5 +1,5 @@
+import sys
 import ply.lex as lex
-from ply import yacc
 
 # Definição de palavras reservadas
 
@@ -108,11 +108,15 @@ def t_error(t):
     print(f"Caractere inválido: {t.value[0]}")
     t.lexer.skip(1)
 
-opcao_inicial = input("Qual a opção desejada? (1 - Utilizar o compilador, 2 - Exibir todos os tokens): ")
+def main() -> None:
+    """Ponto de entrada: recebe o arquivo fonte como argumento CLI."""
+    if len(sys.argv) < 2:
+        print("Uso: python analisador_lexico.py <arquivo_fonte>")
+        sys.exit(1)
 
-if opcao_inicial == '1':
-    arquivo_teste = input("Digite o caminho do arquivo de teste: ")
-    with open(arquivo_teste, 'r') as file:
+    arquivo_fonte = sys.argv[1]
+
+    with open(arquivo_fonte, 'r') as file:
         data = file.read()
 
     lexer = lex.lex()
@@ -127,10 +131,6 @@ if opcao_inicial == '1':
 
     print("Analise lexica concluida. Resultado salvo em 'resultado_lexico.txt'")
 
-elif opcao_inicial == '2':
-    print("Tokens disponíveis:")
-    for token in tokens:
-        print(token)
 
-else:
-    print("Opção inválida. Por favor, escolha 1 ou 2.")
+if __name__ == "__main__":
+    main()
