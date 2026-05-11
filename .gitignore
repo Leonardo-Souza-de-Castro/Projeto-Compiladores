@@ -232,3 +232,5 @@ AnalisadorSintatico/*.class
 # Ignorados pelo padrão de nomes comuns de arquivos fonte do projeto
 impares
 programa
+
+/saida

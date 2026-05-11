@@ -10,7 +10,7 @@ public class main {
         List<Token> tokens = new ArrayList<>();
         
         try {
-            File arquivo = new File("resultado_lexico.txt");
+            File arquivo = new File("./saida/resultado_lexico.txt");
             Scanner leitor = new Scanner(arquivo);
             
             while (leitor.hasNextLine()) {
@@ -33,7 +33,7 @@ public class main {
             leitor.close();
             
         } catch (FileNotFoundException e) {
-            System.out.println("Erro: Arquivo 'resultado_lexico.txt' não encontrado.");
+            System.out.println("Erro: Arquivo './saida/resultado_lexico.txt' não encontrado.");
             System.out.println("Certifique-se de executar o analisador léxico em Python primeiro!");
             return;
         }
@@ -51,7 +51,7 @@ public class main {
         tree.printTree();
 
         // Export the AST so the C semantic analyzer can consume it
-        tree.exportToFile("resultado_sintatico.txt");
-        System.out.println("AST exportada para 'resultado_sintatico.txt'");
+        tree.exportToFile("./saida/resultado_sintatico.txt");
+        System.out.println("AST exportada para './saida/resultado_sintatico.txt'");
     }
 }

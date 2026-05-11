@@ -9,8 +9,8 @@
 #   ./pipeline.sh teste.teste
 #
 # Etapas:
-#   1. Análise léxica   (Python)   → resultado_lexico.txt
-#   2. Análise sintática (Java)    → resultado_sintatico.txt
+#   1. Análise léxica   (Python)   → saida/resultado_lexico.txt
+#   2. Análise sintática (Java)    → saida/resultado_sintatico.txt
 #   3. Compilação do semântico (C) → AnalisadorSemantico/semantico
 #   4. Análise semântica / geração → <nome_fonte>.c
 # =============================================================
@@ -61,6 +61,14 @@ echo " Fonte:  $ARQUIVO_FONTE"
 echo " Saida:  $ARQUIVO_SAIDA"
 echo "============================================="
 
+# Garante que o diretório de saída existe
+mkdir -p saida
+
+# Diagnóstico de versões
+echo "Ambiente:"
+gcc --version | head -n 1
+javac -version
+
 # ── Prévia opcional: exibir tokens da linguagem ───────────────
 python mostrar_tokens.py
 if [ $? -ne 0 ]; then
@@ -82,6 +90,10 @@ echo "      OK → resultado_lexico.txt"
 echo ""
 echo "[2/4] Compilando o analisador sintatico (Java)..."
 javac AnalisadorSintatico/*.java
+if [ $? -ne 0 ]; then
+    echo "      ERRO: falha na compilacao Java."
+    exit 1
+fi
 
 echo "      Executando o analisador sintatico..."
 java -cp AnalisadorSintatico main
@@ -117,11 +129,13 @@ else
 fi
 
 if [ "$RECOMPILAR" = true ]; then
-    # -Wno-format-truncation: suprime aviso de truncamento do snprintf que o
-    # MinGW trata como erro fatal por calcular worst-case com MAX_NAME_LEN.
-    gcc -Wall -Wno-format-truncation -std=c11 -o "$SEMANTICO" $FONTES_C 2>&1
+    # Tenta compilar e captura a saída para mostrar apenas se houver erro
+    GCC_OUT=$(gcc -Wall -Wno-format-truncation -std=c11 -o "$SEMANTICO" $FONTES_C 2>&1)
     if [ $? -ne 0 ]; then
-        echo "      ERRO: falha na compilacao do analisador semantico (veja mensagem acima)."
+        echo "      ERRO: falha na compilacao do analisador semantico."
+        echo "---------------------------------------------"
+        echo "$GCC_OUT"
+        echo "---------------------------------------------"
         exit 1
     fi
     # Após compilar, detecta o binário gerado novamente
@@ -136,7 +150,7 @@ fi
 # ── Passo 4: Geração de Código C ─────────────────────────────
 echo ""
 echo "[4/4] Gerando codigo C..."
-"$SEMANTICO_BIN" resultado_sintatico.txt "$ARQUIVO_SAIDA"
+"$SEMANTICO_BIN" ./saida/resultado_sintatico.txt "$ARQUIVO_SAIDA"
 if [ $? -ne 0 ]; then
     echo "      ERRO: falha na geracao de codigo C."
     exit 1
@@ -148,12 +162,24 @@ EXECUTAVEL="${BASE_NOME}"
 
 echo ""
 echo "[5/5] Compilando o codigo C gerado..."
-gcc "$ARQUIVO_SAIDA" -o "$EXECUTAVEL"
-if [ $? -ne 0 ]; then
-    echo "      ERRO: falha ao compilar $ARQUIVO_SAIDA"
+if [ ! -s "$ARQUIVO_SAIDA" ]; then
+    echo "      ERRO: arquivo $ARQUIVO_SAIDA esta vazio ou nao existe."
     exit 1
 fi
-echo "      OK → executavel '$EXECUTAVEL' gerado"
+
+# Tenta remover o executável antigo
+rm -f "$EXECUTAVEL.exe" 2>/dev/null
+
+# Tenta compilar explicitamente para .exe
+gcc "$ARQUIVO_SAIDA" -o "$EXECUTAVEL.exe" 2>&1 | tee saida/gcc_final_log.txt
+if [ $? -ne 0 ]; then
+    echo "      ERRO: falha ao compilar $ARQUIVO_SAIDA"
+    echo "---------------------------------------------"
+    cat saida/gcc_final_log.txt
+    echo "---------------------------------------------"
+    exit 1
+fi
+echo "      OK → executavel '$EXECUTAVEL.exe' gerado"
 
 echo ""
 echo "============================================="
@@ -164,4 +190,4 @@ echo "============================================="
 echo ""
 echo "Executando o programa..."
 echo "---------------------------------------------"
-"./$EXECUTAVEL"
+"./$EXECUTAVEL.exe"

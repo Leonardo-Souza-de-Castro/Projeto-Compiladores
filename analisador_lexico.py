@@ -122,14 +122,14 @@ def main() -> None:
     lexer = lex.lex()
     lexer.input(data)
 
-    arquivo_resultado = "resultado_lexico.txt"
+    arquivo_resultado = "./saida/resultado_lexico.txt"
 
     with open(arquivo_resultado, 'w') as file:
         for tok in lexer:
             print(f"<{tok.value}, {tok.type}>")
             file.write(f"<{tok.value}, {tok.type}>" + '\n')
 
-    print("Analise lexica concluida. Resultado salvo em 'resultado_lexico.txt'")
+    print("Analise lexica concluida. Resultado salvo em './saida/resultado_lexico.txt'")
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[]) {
     /* Determina o arquivo de entrada da AST */
-    const char *entrada = "resultado_sintatico.txt";
+    const char *entrada = "./saida/resultado_sintatico.txt";
     const char *saida   = SAIDA_PADRAO;
 
     if (argc >= 2) entrada = argv[1];
