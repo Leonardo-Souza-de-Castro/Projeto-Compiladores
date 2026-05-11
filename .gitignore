@@ -205,3 +205,30 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ── Compilador / Pipeline ────────────────────────────────────────────────────
+
+# Saídas da análise léxica
+resultado_lexico.txt
+
+# Saídas da análise sintática
+resultado_sintatico.txt
+
+# Binário do analisador semântico (compilado em C)
+AnalisadorSemantico/semantico
+AnalisadorSemantico/semantico.exe
+
+# Arquivos Java compilados
+AnalisadorSintatico/*.class
+
+# Código C gerado pelo analisador semântico (derivado do arquivo fonte)
+*.c
+
+# Executáveis gerados pelo pipeline (binários finais do programa compilado)
+*.exe
+*.out
+
+# Executáveis sem extensão gerados na raiz (ex: impares, programa)
+# Ignorados pelo padrão de nomes comuns de arquivos fonte do projeto
+impares
+programa
