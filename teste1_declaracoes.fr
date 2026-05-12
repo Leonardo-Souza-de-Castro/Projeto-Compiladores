@@ -1,0 +1,7 @@
+entier a = 10
+entier b = 20
+entier c = 30
+afficher(a)
+afficher(b)
+afficher(c)
+FIN

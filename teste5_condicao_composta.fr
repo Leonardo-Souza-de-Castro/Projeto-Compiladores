@@ -1,0 +1,9 @@
+entier a = 5
+entier b = 10
+si(a { 0 ET b { 5) ouvrir
+    afficher(a)
+fermer
+sinon ouvrir
+    afficher(b)
+fermer
+FIN
