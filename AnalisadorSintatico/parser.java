@@ -100,14 +100,18 @@ class Parser {
         Node cmd = node.addNode("comando");
         switch (token.tipo) {
             case "IF":    return IF(cmd);
-            case "ELIF":  return ifelse(cmd);
-            case "ELSE":  return ELSE(cmd);
             case "WHILE": return WHILE(cmd);
             case "FOR":   return FOR(cmd);
             case "PRINT": return print(cmd);
             case "INPUT": return input(cmd);
             case "OPEN":  return bloco(cmd);
             case "ID":    return atribuicao(cmd);
+            case "INT":
+            case "FLOAT":
+            case "DOUBLE":
+            case "STRING":
+            case "CHAR":
+            case "BOOL": return declaracao(cmd);
             default:      return false;
         }
     }
@@ -118,6 +122,21 @@ class Parser {
             return true;
         }
         return false;
+    }
+
+    private boolean declaracao(Node node) {
+        Node n = node.addNode("declaracao");
+
+        if(!tipoVariavel(n)) return false;
+
+        if(!id(n)) return false;
+
+        if(token != null && token.tipo.equals("IGUAL")) {
+            if(!operadorAtribuicao(n)) return false;
+            if(!idOuNumero(n)) return false;
+        }
+
+        return true;
     }
 
     private boolean id(Node node) {
@@ -135,6 +154,15 @@ class Parser {
     private boolean IF(Node node) {
         Node n = node.addNode("IF");
         if (matchT("IF", n) && matchT("ouvrirPAREN", n) && condicoes(n) && matchT("fermerPAREN", n) && bloco(n)) {
+            
+            while(token != null && token.tipo.equals("ELIF")) {
+                if(!ifelse(n)) return false;
+            }
+
+            if (token != null && token.tipo.equals("ELSE")) {
+                if(!ELSE(n)) return false;
+            }
+            
             return true;
         }
         return false;
