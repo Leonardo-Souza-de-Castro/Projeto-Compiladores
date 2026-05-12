@@ -127,13 +127,13 @@ class Parser {
     private boolean declaracao(Node node) {
         Node n = node.addNode("declaracao");
 
-        if(!tipoVariavel(n)) return false;
+        if (!tipoVariavel(n)) return false;
 
-        if(!id(n)) return false;
+        if (!id(n)) return false;
 
-        if(token != null && token.tipo.equals("IGUAL")) {
-            if(!operadorAtribuicao(n)) return false;
-            if(!idOuNumero(n)) return false;
+        if (token != null && token.tipo.equals("IGUAL")) {
+            if (!operadorAtribuicao(n)) return false;
+            if (!expressao(n)) return false;
         }
 
         return true;
@@ -154,15 +154,15 @@ class Parser {
     private boolean IF(Node node) {
         Node n = node.addNode("IF");
         if (matchT("IF", n) && matchT("ouvrirPAREN", n) && condicoes(n) && matchT("fermerPAREN", n) && bloco(n)) {
-            
-            while(token != null && token.tipo.equals("ELIF")) {
-                if(!ifelse(n)) return false;
+
+            while (token != null && token.tipo.equals("ELIF")) {
+                if (!ifelse(n)) return false;
             }
 
             if (token != null && token.tipo.equals("ELSE")) {
-                if(!ELSE(n)) return false;
+                if (!ELSE(n)) return false;
             }
-            
+
             return true;
         }
         return false;
@@ -266,7 +266,6 @@ class Parser {
         Node n = node.addNode("operadorMatematico");
         if (matchT("ADD", n) || matchT("SUB", n) || matchT("MULT", n)
                 || matchT("DIV", n) || matchT("PCM", n)) {
-                    System.out.println("Entrei aqui o que rolou??");
             return true;
         }
         return false;
@@ -307,28 +306,39 @@ class Parser {
         return false;
     }
 
+
     private boolean atribuicao(Node node) {
         Node n = node.addNode("atribuicao");
+
         if (!id(n)) return false;
-        if (token != null && token.tipo.equals("IGUAL")) {
-            return funcao(n);
-        }
+
+        // ID++ ou ID--
         if (token != null && (token.tipo.equals("PLUSPLUS") || token.tipo.equals("MOINSMOINS"))) {
             return matchT(token.tipo, n);
         }
-        return true; 
+
+        // ID = expressao
+        if (token != null && token.tipo.equals("IGUAL")) {
+            if (!operadorAtribuicao(n)) return false; // consome o '='
+            return expressao(n);                      // parseia o lado direito
+        }
+
+        return true;
     }
 
-    private boolean funcao(Node node){
-        Node n = node.addNode("funcao");
-        if (!id(n)) return false;
-        if (token != null && token.tipo.equals("IGUAL")) {
-            if((idOuNumero(n) && operadorMatematico(n) && idOuNumero(n)|| idOuNumero(n)) );
+    private boolean expressao(Node node) {
+        Node n = node.addNode("expressao");
+
+        if (!idOuNumero(n)) return false;
+
+        // Se houver operador matematico, consome e pega o proximo operando
+        if (token != null && (token.tipo.equals("ADD") || token.tipo.equals("SUB")
+                || token.tipo.equals("MULT") || token.tipo.equals("DIV") || token.tipo.equals("PCM"))) {
+            if (!operadorMatematico(n)) return false;
+            if (!idOuNumero(n)) return false;
         }
-        if (token != null && (token.tipo.equals("PLUSPLUS") || token.tipo.equals("MOINSMOINS"))) {
-            return matchT(token.tipo, n);
-        }
-        return true; 
+
+        return true;
     }
 
     private boolean bloco(Node node) {
