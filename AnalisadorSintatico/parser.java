@@ -327,18 +327,16 @@ class Parser {
     }
 
     private boolean expressao(Node node) {
-        Node n = node.addNode("expressao");
+     if (!idOuNumero(node)) return false;
 
-        if (!idOuNumero(n)) return false;
+     while (token != null && (token.tipo.equals("ADD") || token.tipo.equals("SUB")
+             || token.tipo.equals("MULT") || token.tipo.equals("DIV") || token.tipo.equals("PCM"))) {
+         node.addNode(token.tipo);
+         token = getNextToken();
+         if (!idOuNumero(node)) return false;
+     }
 
-        // Se houver operador matematico, consome e pega o proximo operando
-        if (token != null && (token.tipo.equals("ADD") || token.tipo.equals("SUB")
-                || token.tipo.equals("MULT") || token.tipo.equals("DIV") || token.tipo.equals("PCM"))) {
-            if (!operadorMatematico(n)) return false;
-            if (!idOuNumero(n)) return false;
-        }
-
-        return true;
+     return true;
     }
 
     private boolean bloco(Node node) {

@@ -1,4 +1,5 @@
 entier a = 2
 entier b = 3
-entier teste = a + b
+entier c = 5
+entier teste = a + b + c
 afficher(teste)
