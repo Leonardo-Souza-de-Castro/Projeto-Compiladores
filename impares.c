@@ -1,11 +1,9 @@
 #include <stdio.h>
 
 int main(void) {
-    for (int i = 1; i < 20; i++)
-    {
-        printf("%d\n", i);
-        i++;
-    }
+    int a = 2;
+    int b = 3;
+    int teste = a;
 
     printf("\nPressione ENTER para sair...");
     getchar();

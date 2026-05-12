@@ -1,5 +1,5 @@
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 // =============================================
 // Mapeamento do analisador_lexico.py:
@@ -100,8 +100,6 @@ class Parser {
         Node cmd = node.addNode("comando");
         switch (token.tipo) {
             case "IF":    return IF(cmd);
-            case "ELIF":  return ifelse(cmd);
-            case "ELSE":  return ELSE(cmd);
             case "WHILE": return WHILE(cmd);
             case "FOR":   return FOR(cmd);
             case "PRINT": return print(cmd);
@@ -113,7 +111,7 @@ class Parser {
             case "DOUBLE":
             case "STRING":
             case "CHAR":
-            case "BOOL":  return declaracao(cmd);
+            case "BOOL": return declaracao(cmd);
             default:      return false;
         }
     }
@@ -124,6 +122,21 @@ class Parser {
             return true;
         }
         return false;
+    }
+
+    private boolean declaracao(Node node) {
+        Node n = node.addNode("declaracao");
+
+        if(!tipoVariavel(n)) return false;
+
+        if(!id(n)) return false;
+
+        if(token != null && token.tipo.equals("IGUAL")) {
+            if(!operadorAtribuicao(n)) return false;
+            if(!idOuNumero(n)) return false;
+        }
+
+        return true;
     }
 
     private boolean id(Node node) {
@@ -141,6 +154,15 @@ class Parser {
     private boolean IF(Node node) {
         Node n = node.addNode("IF");
         if (matchT("IF", n) && matchT("ouvrirPAREN", n) && condicoes(n) && matchT("fermerPAREN", n) && bloco(n)) {
+            
+            while(token != null && token.tipo.equals("ELIF")) {
+                if(!ifelse(n)) return false;
+            }
+
+            if (token != null && token.tipo.equals("ELSE")) {
+                if(!ELSE(n)) return false;
+            }
+            
             return true;
         }
         return false;
@@ -240,6 +262,16 @@ class Parser {
         return false;
     }
 
+    private boolean operadorMatematico(Node node) {
+        Node n = node.addNode("operadorMatematico");
+        if (matchT("ADD", n) || matchT("SUB", n) || matchT("MULT", n)
+                || matchT("DIV", n) || matchT("PCM", n)) {
+                    System.out.println("Entrei aqui o que rolou??");
+            return true;
+        }
+        return false;
+    }
+
     private boolean FOR(Node node) {
         Node n = node.addNode("FOR");
         if (matchT("FOR", n)
@@ -279,38 +311,24 @@ class Parser {
         Node n = node.addNode("atribuicao");
         if (!id(n)) return false;
         if (token != null && token.tipo.equals("IGUAL")) {
-            return operadorAtribuicao(n) && expressao(n);
+            return funcao(n);
         }
         if (token != null && (token.tipo.equals("PLUSPLUS") || token.tipo.equals("MOINSMOINS"))) {
             return matchT(token.tipo, n);
         }
-        return true;
+        return true; 
     }
 
-    private boolean declaracao(Node node) {
-        Node n = node.addNode("declaracao");
-        if (!tipoVariavel(n)) return false;
+    private boolean funcao(Node node){
+        Node n = node.addNode("funcao");
         if (!id(n)) return false;
         if (token != null && token.tipo.equals("IGUAL")) {
-            if (!operadorAtribuicao(n)) return false;
-            if (!expressao(n)) return false;
+            if((idOuNumero(n) && operadorMatematico(n) && idOuNumero(n)|| idOuNumero(n)) );
         }
-        return true;
-    }
-
-    private boolean expressao(Node node) {
-        if (!idOuNumero(node)) return false;
-        while (token != null && isOpAritmetico(token.tipo)) {
-            matchT(token.tipo, node);
-            if (!idOuNumero(node)) return false;
+        if (token != null && (token.tipo.equals("PLUSPLUS") || token.tipo.equals("MOINSMOINS"))) {
+            return matchT(token.tipo, n);
         }
-        return true;
-    }
-
-    private boolean isOpAritmetico(String tipo) {
-        return tipo.equals("ADD") || tipo.equals("SUB") ||
-               tipo.equals("MULT") || tipo.equals("DIV") ||
-               tipo.equals("PCM");
+        return true; 
     }
 
     private boolean bloco(Node node) {
