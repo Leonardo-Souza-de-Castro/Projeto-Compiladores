@@ -1,65 +1,67 @@
 import ply.lex as lex
-from ply import yacc
+import sys
+import os
 
-# Definição de palavras reservadas
+# Palavras reservadas da linguagem
 
 reserved = {
-    "entier":"INT",
-    "flotter":"FLOAT",
-    "doubler":"DOUBLE",
-    "chaine":"STRING",
-    "personnage":"CHAR",
-    "logique":"BOOL",
-    "si":"IF",
-    "sinon":"ELSE",
-    "sinon_si":"ELIF",
-    "alors_que":"WHILE",
-    "pour":"FOR",
-    "ET":"AND",
-    "OU":"OR",
-    "NON":"NOT",
+    "entier":     "INT",
+    "flotter":    "FLOAT",
+    "doubler":    "DOUBLE",
+    "chaine":     "STRING",
+    "personnage": "CHAR",
+    "logique":    "BOOL",
+    "si":         "IF",
+    "sinon":      "ELSE",
+    "sinon_si":   "ELIF",
+    "alors_que":  "WHILE",
+    "pour":       "FOR",
+    "ET":         "AND",
+    "OU":         "OR",
+    "NON":        "NOT",
+    "FIN":        "EOF",
+    "afficher":   "PRINT",
+    "saisir":     "INPUT",
+    "ouvrir":     "OPEN",
+    "fermer":     "CLOSE",
+    "PLUSPLUS":   "PLUSPLUS",
+    "MOINSMOINS": "MOINSMOINS",
 }
 
-# Definição de tokens
+_simbolos = [
+    "ID", "NUMBER",
+    "ADD", "SUB", "DIV", "MULT", "PCM",
+    "IGUAL", "IGUAL_MAIOR", "IGUAL_MENOR",
+    "MAIOR", "MENOR", "IGUALDADE",
+    "ouvrirPAREN", "fermerPAREN",
+]
 
-tokens = [
-    "ID",   # Identificadores
-    "NUMBER",  # Números
-    "ADD",    #+
-    "SUB",    #-
-    "DIV",    #/
-    "MULT",   #*
-    "PCM",    #%
-    "IGUAL",  #=
-    "IGUAL_MAIOR",  #{__
-    "IGUAL_MENOR",  #}__
-    "MAIOR",        #{
-    "MENOR",        #}
-    "IGUALDADE"     #__
-] + list(reserved.values())
+tokens = _simbolos + [t for t in reserved.values() if t not in _simbolos]
 
-# Definição de expressões regulares para os tokens simples
+# Tokens simples
 
-t_ADD = r'\+'
-t_SUB = r'\-'
-t_DIV = r'/'
-t_MULT = r'\*'
-t_PCM = r'\%'
-t_IGUAL = r'\='
-t_MAIOR = r'\{'
-t_MENOR = r'\}'
-t_ignore = ' \t'
+t_ADD         = r'\+'
+t_SUB         = r'\-'
+t_DIV         = r'/'
+t_MULT        = r'\*'
+t_PCM         = r'\%'
+t_IGUAL       = r'\='
+t_MAIOR       = r'\{'
+t_MENOR       = r'\}'
+t_ouvrirPAREN = r'\('
+t_fermerPAREN = r'\)'
+t_ignore      = ' \t\r'
 
-# Definição de funções para tokens mais complexos
+# Tokens com regras de prioridade (funções têm prioridade sobre strings)
 
 def t_IGUAL_MAIOR(t):
     r'\{__'
     return t
- 
+
 def t_IGUAL_MENOR(t):
     r'\}__'
     return t
- 
+
 def t_IGUALDADE(t):
     r'__'
     return t
@@ -74,24 +76,35 @@ def t_ID(t):
     t.type = reserved.get(t.value, 'ID')
     return t
 
-# Definição de função para contar linhas
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-# Definição de função para lidar com erros
 def t_error(t):
     print(f"Caractere inválido: {t.value[0]}")
     t.lexer.skip(1)
 
-# Exemplo de uso do lexer
-data = """
-entier x = 10 {__ 5
-si x __ 10
-"""
+# Ponto de entrada
 
-lexer = lex.lex()
-lexer.input(data)
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Uso: python analisador_lexico.py <arquivo_fonte>")
+        sys.exit(1)
 
-for tok in lexer:
-    print(tok)
+    arquivo = sys.argv[1]
+    try:
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            data = f.read()
+    except FileNotFoundError:
+        print(f"Erro: arquivo '{arquivo}' não encontrado.")
+        sys.exit(1)
+
+    lexer = lex.lex()
+    lexer.input(data)
+
+    os.makedirs("saida", exist_ok=True)
+    with open("saida/resultado_lexico.txt", "w", encoding='utf-8') as out:
+        for tok in lexer:
+            linha = f"<{tok.value}, {tok.type}>"
+            print(linha)
+            out.write(linha + "\n")
