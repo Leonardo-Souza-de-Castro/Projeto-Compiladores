@@ -108,6 +108,12 @@ class Parser {
             case "INPUT": return input(cmd);
             case "OPEN":  return bloco(cmd);
             case "ID":    return atribuicao(cmd);
+            case "INT":
+            case "FLOAT":
+            case "DOUBLE":
+            case "STRING":
+            case "CHAR":
+            case "BOOL":  return declaracao(cmd);
             default:      return false;
         }
     }
@@ -273,12 +279,38 @@ class Parser {
         Node n = node.addNode("atribuicao");
         if (!id(n)) return false;
         if (token != null && token.tipo.equals("IGUAL")) {
-            return operadorAtribuicao(n) && idOuNumero(n);
+            return operadorAtribuicao(n) && expressao(n);
         }
         if (token != null && (token.tipo.equals("PLUSPLUS") || token.tipo.equals("MOINSMOINS"))) {
             return matchT(token.tipo, n);
         }
-        return true; 
+        return true;
+    }
+
+    private boolean declaracao(Node node) {
+        Node n = node.addNode("declaracao");
+        if (!tipoVariavel(n)) return false;
+        if (!id(n)) return false;
+        if (token != null && token.tipo.equals("IGUAL")) {
+            if (!operadorAtribuicao(n)) return false;
+            if (!expressao(n)) return false;
+        }
+        return true;
+    }
+
+    private boolean expressao(Node node) {
+        if (!idOuNumero(node)) return false;
+        while (token != null && isOpAritmetico(token.tipo)) {
+            matchT(token.tipo, node);
+            if (!idOuNumero(node)) return false;
+        }
+        return true;
+    }
+
+    private boolean isOpAritmetico(String tipo) {
+        return tipo.equals("ADD") || tipo.equals("SUB") ||
+               tipo.equals("MULT") || tipo.equals("DIV") ||
+               tipo.equals("PCM");
     }
 
     private boolean bloco(Node node) {
