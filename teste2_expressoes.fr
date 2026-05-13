@@ -1,0 +1,9 @@
+entier x = 5
+entier y = 3
+entier soma = x + y
+entier diferenca = x - y
+entier produto = x * y
+afficher(soma)
+afficher(diferenca)
+afficher(produto)
+FIN

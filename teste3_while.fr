@@ -1,0 +1,6 @@
+entier contador = 10
+alors_que(contador { 0) ouvrir
+    afficher(contador)
+    contador MOINSMOINS
+fermer
+FIN

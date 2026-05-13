@@ -1,0 +1,5 @@
+flotter x = 8
+flotter y = 2
+flotter resultado = x + y
+afficher(resultado)
+FIN
